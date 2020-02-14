@@ -1,5 +1,7 @@
 # 2048 bot
 
+![Alt Text](https://github.com/mantinband/2048-bot/blob/master/bot.gif)
+
 ## Tired of wasting time on each game? waste time no more!
 
 just `clone` and run `2048.py`
