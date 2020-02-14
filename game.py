@@ -78,7 +78,7 @@ class Game:
     def start(self):
         while len(self.web_page.find_elements_by_class_name('game-over')) == 0:
             self.move()
-            time.sleep(0.08)
+            time.sleep(0.12)
             if self.board.biggest_tile() == 2048:
                 break
 

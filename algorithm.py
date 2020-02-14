@@ -16,7 +16,7 @@ def compute_board_score(board, key):
                     (j + 2.5) ** 3)
             if board.get_tile(i, j).is_merged:
                 if key == Keys.ARROW_DOWN:
-                    score *= 2
+                    score *= 2.2
 
     if board.get_value(Board.BOARD_SIZE - 1, Board.BOARD_SIZE - 1) != Board.EMPTY_TILE:
         score *= 2
@@ -25,9 +25,12 @@ def compute_board_score(board, key):
         for j in range(0, Board.BOARD_SIZE):
             if board.get_value(i, j) == board.get_value(i + 1, j):
                 score += board.get_value(i, j) ** 4
-                score *= 1.5
+                score *= 1.6
 
     if key == Keys.ARROW_DOWN:
         score *= 1.5
+
+    if not board.last_row_has_empty_spot() and key == Keys.LEFT:
+        score *= 1.1
 
     return score
