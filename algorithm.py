@@ -25,7 +25,7 @@ def compute_board_score(board, key):
                 score *= 1.5
 
     if key == Keys.ARROW_DOWN:
-        score *= board.number_of_merged_tiles()
+        score *= 2**board.number_of_merged_tiles()
         score *= 2.5 if board.get_value(Board.BOARD_SIZE-1, 0) == Board.EMPTY_TILE else 1.5
 
     if not board.last_row_has_empty_spot() and key == Keys.ARROW_LEFT:

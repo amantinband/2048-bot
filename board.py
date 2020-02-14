@@ -155,7 +155,7 @@ class Board:
         num = 0
         for i in range(0, BOARD_SIZE):
             for j in range(0, BOARD_SIZE):
-                if self.get_tile(i,j).is_merged:
+                if self.get_tile(i, j).is_merged:
                     num += 1
         return num
 
