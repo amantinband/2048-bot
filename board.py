@@ -1,5 +1,6 @@
-from selenium.webdriver.common.keys import Keys
+import selenium.webdriver.common.keys
 
+import algorithm
 from tile import Tile
 
 BOARD_SIZE = 4
@@ -15,8 +16,9 @@ def get_tile_position(tile):
 
 class Board:
     def __init__(self):
-        self.board = [[Tile(0) for i in range(0, BOARD_SIZE)] for j in range(0, BOARD_SIZE)]
+        self.board = [[Tile(EMPTY_TILE) for i in range(0, BOARD_SIZE)] for j in range(0, BOARD_SIZE)]
         self.board_changed = False
+        self.score = 0
 
     def populate_from_web_page(self, web_page):
         tiles = web_page.find_elements_by_class_name("tile-new")
@@ -92,31 +94,27 @@ class Board:
         for i in range(0, n):
             self.rotate_right()
 
-    def peek_right_arrow_pressed(self):
-        arrow_pressed_board = self.clone()
-        arrow_pressed_board.rotate_right_n(1)
-        arrow_pressed_board.press_down_arrow()
-        arrow_pressed_board.rotate_right_n(3)
-        return arrow_pressed_board
+    def press_right(self):
+        self.rotate_right_n(1)
+        self.press_down_arrow()
+        self.rotate_right_n(3)
+        self.score = algorithm.compute_board_score(self, selenium.webdriver.common.keys.Keys.ARROW_RIGHT)
 
-    def peek_down_arrow_pressed(self):
-        arrow_pressed_board = self.clone()
-        arrow_pressed_board.press_down_arrow()
-        return arrow_pressed_board
+    def press_down(self):
+        self.press_down_arrow()
+        self.score = algorithm.compute_board_score(self, selenium.webdriver.common.keys.Keys.DOWN)
 
-    def peek_left_arrow_pressed(self):
-        arrow_pressed_board = self.clone()
-        arrow_pressed_board.rotate_right_n(3)
-        arrow_pressed_board.press_down_arrow()
-        arrow_pressed_board.rotate_right_n(1)
-        return arrow_pressed_board
+    def press_left(self):
+        self.rotate_right_n(3)
+        self.press_down_arrow()
+        self.rotate_right_n(1)
+        self.score = algorithm.compute_board_score(self, selenium.webdriver.common.keys.Keys.LEFT)
 
-    def peek_up_arrow_pressed(self):
-        arrow_pressed_board = self.clone()
-        arrow_pressed_board.rotate_right_n(2)
-        arrow_pressed_board.press_down_arrow()
-        arrow_pressed_board.rotate_right_n(2)
-        return arrow_pressed_board
+    def press_up(self):
+        self.rotate_right_n(2)
+        self.press_down_arrow()
+        self.rotate_right_n(2)
+        self.score = algorithm.compute_board_score(self, selenium.webdriver.common.keys.Keys.UP)
 
     def get_biggest_bottom(self):
         for col in range(BOARD_SIZE - 2, -1, -1):

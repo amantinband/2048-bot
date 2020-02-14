@@ -1,7 +1,9 @@
+import threading
+import time
+
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-import time
-import algorithm
+
 from board import Board
 
 
@@ -17,7 +19,7 @@ class Game:
 
     def take_screenshot(self, file_name=None):
         if file_name is None:
-            file_name = str(self.board.biggest_tile()) + '.png'
+            file_name = self.board.biggest_tile().__str__() + '.png'
         self.driver.save_screenshot(file_name)
 
     def add_new_tile(self):
@@ -28,11 +30,32 @@ class Game:
         print("current board:")
         self.board.print_board()
 
+    def create_boards(self):
+        board_left = self.board.clone()
+        board_right = self.board.clone()
+        board_up = self.board.clone()
+        board_down = self.board.clone()
+
+        threads = [threading.Thread(target=board_left.press_left()),
+                   threading.Thread(target=board_right.press_right()),
+                   threading.Thread(target=board_up.press_up()),
+                   threading.Thread(target=board_down.press_down())]
+
+        for thread in threads:
+            thread.start()
+
+        for thread in threads:
+            thread.join()
+
+        boards = {Keys.ARROW_LEFT: board_left,
+                  Keys.ARROW_RIGHT: board_right,
+                  Keys.ARROW_UP: board_up,
+                  Keys.ARROW_DOWN: board_down}
+
+        return boards
+
     def move(self):
-        boards = {Keys.ARROW_LEFT: self.board.peek_left_arrow_pressed(),
-                  Keys.ARROW_RIGHT: self.board.peek_right_arrow_pressed(),
-                  Keys.ARROW_UP: self.board.peek_up_arrow_pressed(),
-                  Keys.ARROW_DOWN: self.board.peek_down_arrow_pressed()}
+        boards = self.create_boards()
 
         valid_boards = {}
         for (key, board) in boards.items():
@@ -44,10 +67,8 @@ class Game:
         winning_key = None
 
         for (key, board) in valid_boards.items():
-            board_score = algorithm.compute_board_score(board, key)
-
-            if board_score > max_score:
-                max_score = board_score
+            if board.score > max_score:
+                max_score = board.score
                 winning_board = board
                 winning_key = key
 
@@ -57,14 +78,14 @@ class Game:
     def start(self):
         while len(self.web_page.find_elements_by_class_name('game-over')) == 0:
             self.move()
-            time.sleep(0.15)
+            time.sleep(0.08)
             if self.board.biggest_tile() == 2048:
-                return
+                break
 
             added_successfully = self.add_new_tile()
             while not added_successfully:
                 time.sleep(0.5)
                 added_successfully = self.add_new_tile()
+
+    def close(self):
         self.driver.close()
-
-
