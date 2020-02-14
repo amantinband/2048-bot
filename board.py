@@ -144,6 +144,21 @@ class Board:
                     biggest_tile = self.get_value(i, j)
         return biggest_tile
 
+    def biggest_in_corner(self):
+        corner_val = self.get_value(BOARD_SIZE-1, BOARD_SIZE-1)
+        for col in range(BOARD_SIZE-2, 0, -1):
+            if self.get_value(BOARD_SIZE-1, col) > corner_val:
+                return False
+        return True
+
+    def number_of_merged_tiles(self):
+        num = 0
+        for i in range(0, BOARD_SIZE):
+            for j in range(0, BOARD_SIZE):
+                if self.get_tile(i,j).is_merged:
+                    num += 1
+        return num
+
     def add_new_tile(self, tile):
         try:
             i, j = get_tile_position(tile)

@@ -22,9 +22,13 @@ class Game:
             file_name = self.board.biggest_tile().__str__() + '.png'
         self.driver.save_screenshot(file_name)
 
+    # noinspection PyBroadException
     def add_new_tile(self):
-        tile = self.web_page.find_element_by_class_name("tile-new")
-        return self.board.add_new_tile(tile)
+        try:
+            tile = self.web_page.find_element_by_class_name("tile-new")
+            return self.board.add_new_tile(tile)
+        except:
+            return False
 
     def print_game_status(self):
         print("current board:")
@@ -78,13 +82,15 @@ class Game:
     def start(self):
         while len(self.web_page.find_elements_by_class_name('game-over')) == 0:
             self.move()
-            time.sleep(0.12)
+
+            # continue_playing_button = self.web_page.find_elements_by_class_name('keep-playing-button')
             if self.board.biggest_tile() == 2048:
                 break
 
+            time.sleep(0.13)
             added_successfully = self.add_new_tile()
             while not added_successfully:
-                time.sleep(0.5)
+                time.sleep(1)
                 added_successfully = self.add_new_tile()
 
     def close(self):
